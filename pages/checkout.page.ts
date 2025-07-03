@@ -11,7 +11,7 @@ export class CheckoutStepOnePage {
     await this.page.fill('[data-test="postalCode"]', zip);
   }
   async continue() {
-    await this.page.getByTestId('continue').click();
+    await this.page.locator('[data-test="continue"]').click();
   }
 }
 
@@ -19,6 +19,6 @@ export class CheckoutStepOnePage {
 export class CheckoutStepTwoPage {
   constructor(private readonly page: Page) {}
   async finish() {
-    await this.page.getByTestId('finish').click();
+    await this.page.locator('[data-test="finish"]').click();
   }
 }

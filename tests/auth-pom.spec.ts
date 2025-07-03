@@ -19,7 +19,7 @@ const USERS = [
 
 test.use({ navigationTimeout: 60_000 });
 
-test.describe('POM‑спецификация: авторизация + баги', () => {
+test.describe('POM-спецификация: авторизация + фирменные баги', () => {
   for (const { login, ok, tag } of USERS) {
     test(`${login} ⇒ ${tag}`, async ({ page }) => {
       /* ───────────────────────── 1. Логируемся ───────────────────────── */

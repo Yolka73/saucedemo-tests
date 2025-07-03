@@ -14,13 +14,13 @@ export class LoginPage {
 
   /** Авторизуемся под указанным пользователем */
   async login(user: string, pass = 'secret_sauce') {
-    await this.page.getByTestId('username').fill(user);
-    await this.page.getByTestId('password').fill(pass);
-    await this.page.getByTestId('login-button').click();
+    await this.page.locator('[data-test="username"]').fill(user);
+    await this.page.locator('[data-test="password"]').fill(pass);
+    await this.page.locator('[data-test="login-button"]').click();
   }
 
   /** Лентяйский геттер: баннер error */
   error() {
-    return this.page.getByTestId('error');
+    return this.page.locator('[data-test="error"]');
   }
 }
