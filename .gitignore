@@ -1,7 +1,13 @@
 
 # Playwright
 node_modules/
+/test-results/
 /playwright-report/
+
 /blob-report/
 /playwright/.cache/
 
+tests/example.spec.ts
+tests/example2.spec.ts
+tests/auth-all.spec.ts
+tests/auth-all1.spec.ts
