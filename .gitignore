@@ -1,15 +1,7 @@
 
-# Node
-node_modules
-package-lock.json
-npm-debug.log*
+# Playwright
+node_modules/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 
-# Playwright artefacts
-playwright-report/
-*.zip
-*.tmp
-
-# OS / editors
-.DS_Store
-.idea/
-.vscode/
