@@ -2,8 +2,7 @@ import { Page } from '@playwright/test';
 
 /**
  * Page Object для формы логина.
- * Храним только публичные методы (goto, login) + локатор ошибки.
- */
+ * Храним только публичные методы (goto, login) + локатор ошибки.*/
 export class LoginPage {
   constructor(private readonly page: Page) {}
 

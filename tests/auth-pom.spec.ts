@@ -7,7 +7,7 @@ import {
   CheckoutStepTwoPage
 } from '../pages/checkout.page';
 
-/** Матрица сценариев: кто и какой «баг» должен показать */
+/** Матрица сценариев: кто и какой «баг» должен показать  */
 const USERS = [
   { login: 'standard_user', ok: true, tag: 'baseline' },
   { login: 'locked_out_user', ok: false, tag: 'locked' },

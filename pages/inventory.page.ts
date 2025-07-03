@@ -3,7 +3,7 @@ import { Page, expect } from '@playwright/test';
 export class InventoryPage {
   constructor(private readonly page: Page) {}
 
-  // ── базовые элементы ──
+  // ──  базовые элементы  ──
   title()       { return this.page.locator('.title'); }
   items()       { return this.page.locator('.inventory_item'); }
   firstName()   { return this.page.locator('.inventory_item_name').first(); }

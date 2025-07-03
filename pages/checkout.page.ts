@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
 
-/** Step‑1 формы Checkout */
+/** Step‑1 формы Checkout  */
 export class CheckoutStepOnePage {
   constructor(private readonly page: Page) {}
 

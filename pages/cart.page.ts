@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-/** Простейший объект корзины: всего один action — Checkout */
+/** Простейший объект корзины: всего один action — Checkout  */
 export class CartPage {
   constructor(private readonly page: Page) {}
   async checkout() {
