@@ -29,26 +29,7 @@ test.describe('Корзина — smoke-набор', () => {
         await page.goBack();
         await expect(stdUser.badge()).toHaveText('1');
     });
-    /*test('Бейдж переживает переходы', async ({ stdUser, page }) => {
-        await expect(stdUser.items()).toHaveCount(6, { timeout: 15_000 });
-
-        await stdUser.addFirstToCart().click();
-
-        await expect(stdUser.title()).toHaveText('Products');
-        await expect(stdUser.items()).toHaveCount(6);
-        const detailsLink = stdUser.firstCardLink();
-        await expect(detailsLink).toBeVisible({ timeout: 10_000 }); // ⬅ ждём
-
-        await Promise.all([
-            page.waitForURL(/inventory-item\.html/),                  // ⬅ ждём навигацию
-            detailsLink.click()
-        ]);
-
-        await page.goBack();
-        await expect(stdUser.badge()).toHaveText('1');
-    });*/
-
-
+ 
     /* 4. Проверка сумм на Overview */
     test('Суммы Item / Tax / Total корректны', async ({ stdUser, page }) => {
         // добавляем два товара

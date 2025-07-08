@@ -70,12 +70,6 @@ export const test = base.extend<MyFixtures>({
         await stdUser.resetAppState();
     },
 
-    /*──────── cartPage: +1 товар и открыт Cart ────────*/
-    //cartPage: async ({ invPage, page }, use) => {
-    //await invPage.addFirstToCart().click();
-    //await invPage.openCart();
-    //await use(new CartPage(page));
-    //},
 
     /*──────── checkout1Page ────────*/
     checkout1Page: async ({ cartWithItem, page }, use) => {
