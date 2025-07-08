@@ -1,57 +1,50 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { InventoryPage } from '../pages/inventory.page';
+import { test, expect } from '../fixtures/fixtures';
+import { USERS }        from '../fixtures/users.data';
+//import { LoginPage } from '../pages/login.page';
+//import { InventoryPage } from '../pages/inventory.page';
 import { CartPage } from '../pages/cart.page';
-import {
-  CheckoutStepOnePage,
-  CheckoutStepTwoPage
-} from '../pages/checkout.page';
+import {  CheckoutStepOnePage,
+         CheckoutStepTwoPage} from '../pages/checkout.page';
 
-/** Матрица сценариев: кто и какой «баг» должен показать  */
-const USERS = [
-  { login: 'standard_user', ok: true, tag: 'baseline' },
-  { login: 'locked_out_user', ok: false, tag: 'locked' },
-  { login: 'problem_user', ok: true, tag: 'problem' },
-  { login: 'performance_glitch_user', ok: true, tag: 'performance' },
-  { login: 'error_user', ok: true, tag: 'error' },
-  { login: 'visual_user', ok: true, tag: 'visual' },
-];
 
 test.use({ navigationTimeout: 60_000 });
 
-test.describe('POM-спецификация: авторизация + фирменные баги', () => {
-  for (const { login, ok, tag } of USERS) {
-    test(`${login} ⇒ ${tag}`, async ({ page }) => {
-      /* ───────────────────────── 1. Логируемся ───────────────────────── */
-      const loginPage = new LoginPage(page);
-      await loginPage.goto();              // открываем /
-      await loginPage.login(login);        // вводим креды
+test.describe('POM-спецификация+фикстуры: авторизация + фирменные баги', () => {
+  for (const u of USERS) {
+    test(`${u.login} ⇒ ${u.tag}`, async ({
+      user,               // ← готовый объект { login, ok, tag }
+      loginPage,
+      invPage,
+      page
+    }) => {
+      /* ─────────────────── 1. Логинимся через loginPage ─────────────────── */
+      await loginPage.login(user.login);
 
       // Заблокированный юзер: проверяем баннер и выходим
-      if (!ok) {
+      if (!user.ok) {
         await expect(loginPage.error()).toContainText(/locked out/i);
         return;
       }
 
       /* ───────────────────────── 2. Страница товаров ─────────────────── */
-      const inv = new InventoryPage(page);
-      await expect(inv.title()).toHaveText('Products');   // sanity‑check UI
-      await expect(inv.items()).toHaveCount(6);           // ровно 6 карточек
+      //const inv = new InventoryPage(page);
+      await expect(invPage.title()).toHaveText('Products');   // sanity‑check UI
+      await expect(invPage.items()).toHaveCount(6);           // ровно 6 карточек
 
       /* ────────── 3. Switch‑case: «фирменные» дефекты ────────── */
-      switch (tag) {
+      switch (user.tag) {
         /* baseline: сортировка должна реально менять порядок */
         case 'baseline': {
-          const before = await inv.firstName().innerText(); // A→Z топ‑товар
-          await inv.sortZA();                               // Z→A
-          await expect(inv.firstName())                     // порядок ДОЛЖЕН
+          const before = await invPage.firstName().innerText(); // A→Z топ‑товар
+          await invPage.sortZA();                               // Z→A
+          await expect(invPage.firstName())                     // порядок ДОЛЖЕН
             .not.toHaveText(before);                        // измениться
           break;
         }
 
         /* problem_user: сломанная ссылка у первой карточки */
         case 'problem': {
-          const link = inv.firstCardLink();
+          const link = invPage.firstCardLink();
           if (await link.count() === 0) {
             expect(true).toBe(true);                       // <a> отсутствует
           } else {
@@ -62,17 +55,18 @@ test.describe('POM-спецификация: авторизация + фирме
 
         /* visual_user: картинка‑собака (404) */
         case 'visual': {
-          await expect(inv.firstCardImg())
+          await expect(invPage.firstCardImg())
             .toHaveAttribute('src', /sl-404/i);
           break;
         }
 
         /* performance_glitch_user: UI долго перерисовывается */
         case 'performance': {
-          const before = await inv.firstName().innerText();
+          const before = await invPage.firstName().innerText();
           const start = Date.now();
-          await inv.sortZA();                               // триггер «лаг»
-          await expect(inv.firstName())                     // ждём смены
+          await invPage.sortZA();                               
+          // Проверяем, что сортировка работает медленно, но корректно
+          await expect(invPage.firstName())                     // ждём смены
             .not.toHaveText(before, { timeout: 20_000 });
           const delay = Date.now() - start;
           console.log(`⏱ delay = ${delay} ms`);
@@ -82,21 +76,21 @@ test.describe('POM-спецификация: авторизация + фирме
 
         /* error_user: Finish не ведёт к /checkout-complete.html */
         case 'error': {
-          await inv.addFirstToCart().click(); // товар в корзину
-          await inv.openCart();               // переходим в Cart
+        await invPage.addFirstToCart().click();
+          await invPage.openCart();
+          const cartPage = new CartPage(page);
 
-          const cart = new CartPage(page);
-          await cart.checkout();              // Checkout → Step‑1
-
+          /* 2. Checkout → Step-1 → Step-2 */
+          await cartPage.checkout();
           const step1 = new CheckoutStepOnePage(page);
-          await step1.fillInfo();             // вводим valid‑данные
-          await step1.continue();             // Continue → Step‑2
+          await step1.fillInfo();
+          await step1.continue();
 
           const step2 = new CheckoutStepTwoPage(page);
-          await step2.finish();               // Finish — должен упасть
+          await step2.finish();
 
-          await expect(page)                  // проверяем, что НЕ /complete
-            .not.toHaveURL(/checkout-complete\.html/);
+          /* 3. баг: нет редиректа на /checkout-complete.html */
+          await expect(page).not.toHaveURL(/checkout-complete\.html/);
           break;
         }
       }
