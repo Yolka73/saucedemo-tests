@@ -29,8 +29,7 @@ interface MyFixtures {
     stdUser: InventoryPage;       // авторизованный standard_user
     cartPage: CartPage;
     cartWithItem: CartPage;            // корзина с 1-м товаром
-    checkout1Page: CheckoutStepOnePage; // (оставил — вдруг пригодится)
-    checkout2Page: CheckoutStepTwoPage; //
+   
 }
 
 export const test = base.extend<MyFixtures>({
@@ -68,21 +67,8 @@ export const test = base.extend<MyFixtures>({
         await use(new CartPage(page));
         // cleanup: Reset App State, чтобы корзина не тащилась
         await stdUser.resetAppState();
-    },
-
-
-    /*──────── checkout1Page ────────*/
-    checkout1Page: async ({ cartWithItem, page }, use) => {
-        await cartWithItem.checkout();
-        await use(new CheckoutStepOnePage(page));;
-    },
-
-    /*──────── checkout2Page ────────*/
-    checkout2Page: async ({ checkout1Page, page }, use) => {
-        await checkout1Page.fillInfo();
-        await checkout1Page.continue();
-        await use(new CheckoutStepTwoPage(page))
     }
+
 });
 
 export { expect } from '@playwright/test';
